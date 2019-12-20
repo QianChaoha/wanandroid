@@ -40,13 +40,13 @@ class NewMainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedL
     private var userJson by Preference(Preference.USER_GSON, "")
 
     private val titleList = arrayOf("首页", "广场", "最新项目", "体系", "导航")
-    private val fragmentList = arrayListOf<Fragment>()
+    private val fragmentList = arrayListOf<Fragment>()//同java的ArrayList
     private val homeFragment by lazy { HomeFragment() } // 首页
     private val squareFragment by lazy { SquareFragment() } // 广场
     private val lastedProjectFragment by lazy { ProjectTypeFragment.newInstance(0, true) } // 最新项目
     private val systemFragment by lazy { SystemFragment() } // 体系
     private val navigationFragment by lazy { NavigationFragment() } // 导航
-
+    private var viewPagerChangeCallback: ViewPager2.OnPageChangeCallback? = null
 
     override fun getLayoutResId() = R.layout.activity_new_main
 
@@ -75,6 +75,7 @@ class NewMainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedL
 
     private fun initViewPager() {
         viewPager.offscreenPageLimit = 1
+        //kotlin不可以实例化一个抽象类。使用object关键字。可以理解为: object不是一个简单的类，他有一个父类，他继承自FragmentStateAdapter
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int) = fragmentList[position]
 
@@ -82,11 +83,18 @@ class NewMainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedL
 
         }
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        viewPagerChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 if (position == 1) addFab.show() else addFab.hide()
             }
-        })
+        }
+
+        viewPagerChangeCallback?.let {
+            viewPager.registerOnPageChangeCallback(it)
+        }
+
+
+
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = titleList[position]
         }.attach()
@@ -107,6 +115,8 @@ class NewMainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedL
 
     private fun exit() {
         MaterialDialog(this).show {
+            //T.()->Unit,这里this就是MaterialDialog
+            //title   message 调用的都是MaterialDialog的方法
             title = "退出"
             message(text = "是否确认退出登录？")
             positiveButton(text = "确认") {
@@ -143,5 +153,10 @@ class NewMainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedL
         startKtxActivity<BrowserNormalActivity>(value = BrowserNormalActivity.URL to TOOL_URL)
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        viewPagerChangeCallback?.let {
+            viewPager.unregisterOnPageChangeCallback(it)
+        }
+    }
 }

@@ -15,8 +15,9 @@ import kotlin.properties.Delegates
  * on 2018/3/13 13:35
  */
 class App : Application() {
-
+    //companion object类似java中static
     companion object {
+        //by Delegates.notNull()跟lateinit也差不多
         var CONTEXT: Context by Delegates.notNull()
         lateinit var CURRENT_USER: User
     }
@@ -25,6 +26,7 @@ class App : Application() {
         super.onCreate()
         CONTEXT = applicationContext
 
+        //TODO ?
         startKoin {
             androidContext(this@App)
             modules(appModule)

@@ -11,13 +11,11 @@ import androidx.databinding.ViewDataBinding
  * Created by luyao
  * on 2019/11/15 16:19
  */
-abstract class BaseVMFragment<VM : BaseViewModel>(useBinding: Boolean = false) : androidx.fragment.app.Fragment() {
+abstract class BaseVMFragment<VM : BaseViewModel>(open var useBinding: Boolean = false) : androidx.fragment.app.Fragment() {
 
-    private val _useBinding = useBinding
     protected lateinit var mBinding: ViewDataBinding
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return if (_useBinding) {
+        return if (useBinding) {
             mBinding = DataBindingUtil.inflate(inflater, getLayoutResId(), container, false)
             mBinding.root
         } else

@@ -28,7 +28,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Created by luyao
  * on 2018/3/13 14:15
  */
-class HomeFragment : BaseVMFragment<ArticleViewModel>() {
+class HomeFragment(override var useBinding: Boolean = false) : BaseVMFragment<ArticleViewModel>() {
 
     private val mViewModel: ArticleViewModel by viewModel()
     private val isLogin by Preference(Preference.IS_LOGIN, false)
@@ -41,7 +41,6 @@ class HomeFragment : BaseVMFragment<ArticleViewModel>() {
     override fun getLayoutResId() = R.layout.fragment_home
 
     override fun initView() {
-
         initRecycleView()
         initBanner()
 
@@ -60,9 +59,11 @@ class HomeFragment : BaseVMFragment<ArticleViewModel>() {
             addItemDecoration(SpaceItemDecoration(homeRecycleView.dp2px(10)))
         }
         homeArticleAdapter.run {
+            //参数未使用,使用下划线代替
             setOnItemClickListener { _, _, position ->
                 startKtxActivity<BrowserNormalActivity>(value = BrowserNormalActivity.URL to homeArticleAdapter.data[position].link)
             }
+            //相当于HomeFragment.this.onItemChildClickListener
             onItemChildClickListener = this@HomeFragment.onItemChildClickListener
             addHeaderView(banner)
             setLoadMoreView(CustomLoadMoreView())
@@ -100,9 +101,7 @@ class HomeFragment : BaseVMFragment<ArticleViewModel>() {
             setBannerStyle(BannerConfig.NUM_INDICATOR_TITLE)
             setImageLoader(GlideImageLoader())
             setOnBannerListener { position ->
-                run {
-                    startKtxActivity<BrowserNormalActivity>(value = BrowserNormalActivity.URL to bannerUrls[position])
-                }
+                startKtxActivity<BrowserNormalActivity>(value = BrowserNormalActivity.URL to bannerUrls[position])
             }
         }
     }

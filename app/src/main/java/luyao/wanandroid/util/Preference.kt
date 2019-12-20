@@ -9,6 +9,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
+ * https://blog.csdn.net/zhang___yong/article/details/78355519
  * Created by luyao
  * on 2018/1/19 15:50
  */
@@ -31,6 +32,7 @@ class Preference<T>(val name: String, private val default: T) : ReadWritePropert
         putValue(name, value)
     }
 
+    //prefs方法返回SharedPreferences类型,prefs.edit()返回SharedPreferences.Editor类型·
     @SuppressLint("CommitPrefEdits")
     private fun <T> putValue(name: String, value: T) = with(prefs.edit()) {
         when (value) {
