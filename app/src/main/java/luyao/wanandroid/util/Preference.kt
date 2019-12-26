@@ -10,6 +10,8 @@ import kotlin.reflect.KProperty
 
 /**
  * https://blog.csdn.net/zhang___yong/article/details/78355519
+ * 委托属性就是将一个成员变量委托给一个类管理，这个类需要实现getValue和setValue。
+ * 换言之，属性将自己的get和set方法委托给了这个类的getValue和setValue
  * Created by luyao
  * on 2018/1/19 15:50
  */
