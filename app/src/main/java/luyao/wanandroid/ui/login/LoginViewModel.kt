@@ -17,7 +17,7 @@ import luyao.wanandroid.model.repository.LoginRepository
  * on 2019/4/2 16:36
  */
 class LoginViewModel(val repository: LoginRepository, val provider: CoroutinesDispatcherProvider) : BaseViewModel() {
-
+    //Data Binding的通知机制,如果直接修改Model实体对象中的数据，这些数据并不能直接更新到UI。通过ObservableField可以解决
     val userName = ObservableField<String>("")
     val passWord = ObservableField<String>("")
 
@@ -36,33 +36,33 @@ class LoginViewModel(val repository: LoginRepository, val provider: CoroutinesDi
 
     // ViewModel 只处理视图逻辑，数据仓库 Repository 负责业务逻辑
     fun login() {
+        if (userName.get().isNullOrBlank() || passWord.get().isNullOrBlank()) {
+            emitUiState(enableLoginButton = false)
+            return
+        }
+        showLoading()
+        //viewModelScope是ViewModel的扩展函数
         viewModelScope.launch(provider.computation) {
-            if (userName.get().isNullOrBlank() || passWord.get().isNullOrBlank()) {
-                emitUiState(enableLoginButton = false)
-                return@launch
-            }
-
-            withContext(provider.main) { showLoading() }
-
+            // provider.computation相当于Dispatchers.Default
             val result = repository.login(userName.get() ?: "", passWord.get() ?: "")
 
             withContext(provider.main) {
-//                if (result is Result.Success) {
+                //                if (result is Result.Success) {
 //                    emitUiState(showSuccess = result.data, enableLoginButton = true)
 //                } else if (result is Result.Error) {
 //                    emitUiState(showError = result.exception.message, enableLoginButton = true)
 //                }
 
-                checkResult(result,{
+                checkResult(result, {
                     emitUiState(showSuccess = it, enableLoginButton = true)
-                },{
-                    emitUiState(showError = it , enableLoginButton = true)
+                }, {
+                    emitUiState(showError = it, enableLoginButton = true)
                 })
             }
         }
     }
 
-    private inline  fun <T : Any> checkResult(result: Result<T>, success:(T) -> Unit, error:(String?)->Unit){
+    private inline fun <T : Any> checkResult(result: Result<T>, success: (T) -> Unit, error: (String?) -> Unit) {
         if (result is Result.Success) {
             success(result.data)
         } else if (result is Result.Error) {
@@ -71,11 +71,9 @@ class LoginViewModel(val repository: LoginRepository, val provider: CoroutinesDi
     }
 
     fun register() {
+        if (userName.get().isNullOrBlank() || passWord.get().isNullOrBlank()) return
+        showLoading()
         viewModelScope.launch(provider.computation) {
-            if (userName.get().isNullOrBlank() || passWord.get().isNullOrBlank()) return@launch
-
-            withContext(provider.main) { showLoading() }
-
             val result = repository.register(userName.get() ?: "", passWord.get() ?: "")
             withContext(provider.main) {
                 if (result is Result.Success) {
