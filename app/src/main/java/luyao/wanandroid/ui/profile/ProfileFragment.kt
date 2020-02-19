@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.Gravity
 import android.view.MenuItem
 import androidx.appcompat.widget.PopupMenu
+import androidx.navigation.Navigation
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.bumptech.glide.Glide
@@ -20,8 +21,8 @@ import luyao.util.ktx.ext.startKtxActivity
 import luyao.util.ktx.ext.visible
 import luyao.wanandroid.R
 import luyao.wanandroid.model.bean.User
+import luyao.wanandroid.test.ConstraintLayoutTest
 import luyao.wanandroid.ui.collect.MyCollectActivity
-import luyao.wanandroid.ui.login.LoginActivity
 import luyao.wanandroid.util.GITHUB_PAGE
 import luyao.wanandroid.util.ISSUE_URL
 import luyao.wanandroid.util.Preference
@@ -48,13 +49,14 @@ class ProfileFragment : BaseFragment() {
 
     override fun initData() {
 
+        versionName.setOnClickListener { startKtxActivity<ConstraintLayoutTest>() }
         license.setOnClickListener { showOwnLicense() }
         source.setOnClickListener { activity?.openBrowser(GITHUB_PAGE) }
         feedback.setOnClickListener { showFeedBackMenu() }
         thirdLib.setOnClickListener { showLicenseDialog() }
         developer.setOnClickListener { showMe() }
-        loginLayout.setOnClickListener { if (!isLogin) startKtxActivity<LoginActivity>() }
-        collect.setOnClickListener { if (isLogin) startKtxActivity<MyCollectActivity>() }
+        loginLayout.setOnClickListener { if (!isLogin) Navigation.findNavController(loginLayout).navigate(R.id.action_tab_to_login) }
+        collect.setOnClickListener { if (isLogin) Navigation.findNavController(loginLayout).navigate(R.id.action_tab_to_colect) }
     }
 
     private fun refreshData() {

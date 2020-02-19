@@ -8,17 +8,14 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.youth.banner.BannerConfig
-import kotlinx.android.synthetic.main.activity_collect.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import luyao.util.ktx.base.BaseVMFragment
 import luyao.util.ktx.ext.dp2px
-import luyao.util.ktx.ext.startKtxActivity
 import luyao.util.ktx.ext.toast
 import luyao.wanandroid.R
 import luyao.wanandroid.adapter.HomeArticleAdapter
 import luyao.wanandroid.model.bean.Banner
 import luyao.wanandroid.ui.BrowserActivity
-import luyao.wanandroid.ui.login.LoginActivity
 import luyao.wanandroid.ui.square.ArticleViewModel
 import luyao.wanandroid.util.GlideImageLoader
 import luyao.wanandroid.util.Preference
@@ -65,11 +62,11 @@ class HomeFragment(override var useBinding: Boolean = false) : BaseVMFragment<Ar
             //参数未使用,使用下划线代替
             setOnItemClickListener { _, _, position ->
                 val bundle = bundleOf(BrowserActivity.URL to homeArticleAdapter.data[position].link)
-                androidx.navigation.Navigation.findNavController(homeRecycleView).navigate(R.id.action_tab_to_browser,bundle)
+                androidx.navigation.Navigation.findNavController(homeRecycleView).navigate(R.id.action_tab_to_browser, bundle)
             }
             //相当于HomeFragment.this.onItemChildClickListener
             onItemChildClickListener = this@HomeFragment.onItemChildClickListener
-//            if(headerLayoutCount>0) removeAllHeaderView()
+            if (headerLayoutCount > 0) removeAllHeaderView()
             addHeaderView(banner)
             setLoadMoreView(CustomLoadMoreView())
             setOnLoadMoreListener({ loadMore() }, homeRecycleView)
@@ -89,7 +86,7 @@ class HomeFragment(override var useBinding: Boolean = false) : BaseVMFragment<Ar
                         notifyDataSetChanged()
                     }
                 } else {
-                    activity?.startKtxActivity<LoginActivity>()
+                    Navigation.findNavController(homeRecycleView).navigate(R.id.action_tab_to_login)
                 }
             }
         }

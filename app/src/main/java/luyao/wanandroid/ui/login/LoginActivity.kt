@@ -4,27 +4,29 @@ import android.app.ProgressDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.title_layout.*
+import luyao.mvvm.core.base.BaseVMActivity
 import luyao.util.ktx.ext.toast
 import luyao.wanandroid.R
 import luyao.wanandroid.databinding.ActivityLoginBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.util.concurrent.ThreadPoolExecutor
 
 /**
  * Created by Lu
  * on 2018/4/5 07:56
  */
-class LoginActivity : luayo.mvvm.core.base.BaseVMActivity<LoginViewModel, ActivityLoginBinding>() {
+class LoginActivity : BaseVMActivity<LoginViewModel>() {
 
-    val mViewModel: LoginViewModel by viewModel()
 
     override fun getLayoutResId() = R.layout.activity_login
 
+    override fun initVM(): LoginViewModel = getViewModel()
+
     override fun initView() {
-        //è°ƒç”¨setLifecycleOwnerä¹‹åï¼Œç»‘å®šäº†LiveDataæ•°æ®æºçš„xmlæ§ä»¶æ‰ä¼šéšç€æ•°æ®å˜åŒ–è€Œæ”¹å˜
+        //µ÷ÓÃsetLifecycleOwnerÖ®ºó£¬°ó¶¨ÁËLiveDataÊı¾İÔ´µÄxml¿Ø¼ş²Å»áËæ×ÅÊı¾İ±ä»¯¶ø¸Ä±ä
         mBinding.lifecycleOwner = this
-        //ç»™DataBindingè®¾ç½®æ•°æ®æºViewModel
-        mBinding.viewModel = mViewModel
+        //¸øDataBindingÉèÖÃÊı¾İÔ´ViewModel
+         (mBinding as ActivityLoginBinding).viewModel = mViewModel
         mToolbar.setTitle(R.string.login)
         mToolbar.setNavigationIcon(R.drawable.arrow_back)
     }
@@ -35,7 +37,7 @@ class LoginActivity : luayo.mvvm.core.base.BaseVMActivity<LoginViewModel, Activi
 
     override fun startObserve() {
         mViewModel.apply {
-            // new Observer(){}  lambdaè¡¨è¾¾å¼  -->   Observer{}
+            // new Observer(){}  lambda±í´ïÊ½  -->   Observer{}
             mRegisterUser.observe(this@LoginActivity, Observer {
                 it?.run {
                     mViewModel.login()
@@ -47,7 +49,6 @@ class LoginActivity : luayo.mvvm.core.base.BaseVMActivity<LoginViewModel, Activi
 
                 it.showSuccess?.let {
                     dismissProgressDialog()
-//                    startKtxActivity<MainFragment>()
                     finish()
                 }
 
